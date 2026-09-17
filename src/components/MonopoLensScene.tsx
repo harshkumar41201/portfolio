@@ -51,7 +51,6 @@ export const MonopoLensScene: React.FC = () => {
     const group = new THREE.Group();
     scene.add(group);
 
-    // Main Crystal Sphere
     // Main Optical Crystal Sphere
     const sphereGeometry = new THREE.SphereGeometry(1.15, 64, 64);
     const sphereMaterial = new THREE.MeshPhysicalMaterial({
@@ -74,7 +73,7 @@ export const MonopoLensScene: React.FC = () => {
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     group.add(sphere);
 
-    // Inner Luminous Radiant Core (Provides internal warmth and refraction depth)
+    // Inner Luminous Radiant Core
     const coreGeometry = new THREE.SphereGeometry(0.38, 32, 32);
     const coreMaterial = new THREE.MeshStandardMaterial({
       color: new THREE.Color('#e8c949'),
@@ -127,14 +126,13 @@ export const MonopoLensScene: React.FC = () => {
     const handleScroll = () => {
       scrollY = window.scrollY;
       if (containerRef.current) {
-        // Smoothly fade out the 3D element as user scrolls down into content
         const fadeRatio = Math.max(0, 1 - scrollY / 650);
         containerRef.current.style.opacity = (fadeRatio * 0.95).toString();
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // 6. Responsive Placement (Smooth desktop framing for all screens >= 768px)
+    // 6. Responsive Placement
     const handleResize = () => {
       const currentWidth = window.innerWidth;
       const currentHeight = window.innerHeight;
@@ -155,7 +153,7 @@ export const MonopoLensScene: React.FC = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // 7. Animation Loop
+    // 7. Fast, high-fps Animation Loop
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -165,28 +163,25 @@ export const MonopoLensScene: React.FC = () => {
       const elapsedTime = clock.getElapsedTime();
       const currentWidth = window.innerWidth;
 
-      // Smooth mouse easing (Lerp)
-      mouse.x += (mouse.targetX - mouse.x) * 0.05;
-      mouse.y += (mouse.targetY - mouse.y) * 0.05;
+      // Snappy mouse easing (0.14 vs 0.05 for immediate, crisp response)
+      mouse.x += (mouse.targetX - mouse.x) * 0.14;
+      mouse.y += (mouse.targetY - mouse.y) * 0.14;
 
-      // Group floating physics: Full desktop right-anchor for screens >= 768px
       const basePosX = currentWidth >= 768 ? 1.55 : 0.1;
       const basePosY = currentWidth >= 768 ? 0.05 : -0.88;
 
-      group.position.x = basePosX + mouse.x * 0.25;
-      group.position.y = basePosY + mouse.y * 0.2 + Math.sin(elapsedTime * 0.8) * 0.06;
+      group.position.x = basePosX + mouse.x * 0.28;
+      group.position.y = basePosY + mouse.y * 0.22 + Math.sin(elapsedTime * 0.8) * 0.06;
 
-      // Slow elegant rotations
-      sphere.rotation.y = elapsedTime * 0.15 + mouse.x * 0.3;
-      sphere.rotation.x = mouse.y * 0.2 + Math.cos(elapsedTime * 0.5) * 0.05;
+      sphere.rotation.y = elapsedTime * 0.15 + mouse.x * 0.35;
+      sphere.rotation.x = mouse.y * 0.22 + Math.cos(elapsedTime * 0.5) * 0.05;
 
       ring.rotation.z = elapsedTime * 0.18;
-      ring.rotation.y = Math.PI / 8 + mouse.x * 0.15;
+      ring.rotation.y = Math.PI / 8 + mouse.x * 0.2;
 
       innerRing.rotation.z = -elapsedTime * 0.14;
-      innerRing.rotation.x = -Math.PI / 4 + mouse.y * 0.15;
+      innerRing.rotation.x = -Math.PI / 4 + mouse.y * 0.2;
 
-      // Point light tracks mouse for glints
       pointLight.position.x = basePosX + mouse.x * 1.5;
       pointLight.position.y = basePosY + 1.2 + mouse.y * 1.2;
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const BackgroundGradients: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const spotlightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -16,9 +16,14 @@ export const BackgroundGradients: React.FC = () => {
     };
 
     const updatePosition = () => {
-      currentX += (targetX - currentX) * 0.06;
-      currentY += (targetY - currentY) * 0.06;
-      setMousePos({ x: Math.round(currentX), y: Math.round(currentY) });
+      // Fast, snappy spotlight interpolation without React re-renders
+      currentX += (targetX - currentX) * 0.2;
+      currentY += (targetY - currentY) * 0.2;
+
+      if (spotlightRef.current) {
+        spotlightRef.current.style.transform = `translate3d(${currentX - 325}px, ${currentY - 325}px, 0)`;
+      }
+
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
@@ -33,7 +38,7 @@ export const BackgroundGradients: React.FC = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#06070a]">
-      {/* 1. Precision Tech Grid Matrix (Masked to seamlessly blend into obsidian space) */}
+      {/* 1. Precision Tech Grid Matrix */}
       <div
         className="absolute inset-0 opacity-40"
         style={{
@@ -44,11 +49,11 @@ export const BackgroundGradients: React.FC = () => {
         }}
       />
 
-      {/* 2. Top Horizon Beam & Radiant Ambient Light (Linear / Apple inspired) */}
+      {/* 2. Top Horizon Beam & Radiant Ambient Light */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1.5px] bg-gradient-to-r from-transparent via-[#e8c949]/60 via-[#789e71]/40 to-transparent shadow-[0_0_20px_rgba(232,201,73,0.4)]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-3xl h-28 bg-gradient-to-b from-[#e8c949]/12 to-transparent blur-3xl" />
 
-      {/* 3. Primary Hero Ambient Gradient Halo (Warm Champagne & Radiant Amber) */}
+      {/* 3. Primary Hero Ambient Gradient Halo */}
       <div
         className="absolute -top-[10%] right-[2%] w-[680px] sm:w-[920px] h-[680px] sm:h-[920px] rounded-full filter blur-[110px] opacity-60 animate-pulse"
         style={{
@@ -57,7 +62,7 @@ export const BackgroundGradients: React.FC = () => {
         }}
       />
 
-      {/* 4. Secondary Middle Ambient Aurora (Sage Emerald & Deep Jade) */}
+      {/* 4. Secondary Middle Ambient Aurora */}
       <div
         className="absolute top-[32%] -left-[12%] w-[580px] sm:w-[820px] h-[580px] sm:h-[820px] rounded-full filter blur-[130px] opacity-45"
         style={{
@@ -65,7 +70,7 @@ export const BackgroundGradients: React.FC = () => {
         }}
       />
 
-      {/* 5. Tertiary Lower Section Bloom (Terracotta Bronze & Midnight Indigo) */}
+      {/* 5. Tertiary Lower Section Bloom */}
       <div
         className="absolute bottom-[4%] right-[0%] w-[550px] sm:w-[780px] h-[550px] sm:h-[780px] rounded-full filter blur-[125px] opacity-50"
         style={{
@@ -73,17 +78,17 @@ export const BackgroundGradients: React.FC = () => {
         }}
       />
 
-      {/* 6. Dynamic Smooth Mouse Spotlight (Illuminates the grid and atmosphere) */}
+      {/* 6. Dynamic Direct-DOM Mouse Spotlight (Zero React re-render lag) */}
       <div
-        className="absolute w-[650px] h-[650px] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none opacity-80 transition-opacity duration-300"
+        ref={spotlightRef}
+        className="absolute top-0 left-0 w-[650px] h-[650px] rounded-full pointer-events-none opacity-80 will-change-transform"
         style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-          background: 'radial-gradient(circle, rgba(232, 201, 73, 0.12) 0%, rgba(224, 148, 66, 0.05) 35%, transparent 70%)',
+          transform: `translate3d(${window.innerWidth * 0.7 - 325}px, ${window.innerHeight * 0.35 - 325}px, 0)`,
+          background: 'radial-gradient(circle, rgba(232, 201, 73, 0.14) 0%, rgba(224, 148, 66, 0.06) 35%, transparent 70%)',
         }}
       />
 
-      {/* 7. Typography Protection Vignette (Maintains crisp WCAG AAA legibility over left text) */}
+      {/* 7. Typography Protection Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
