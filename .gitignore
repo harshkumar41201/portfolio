@@ -1,4 +1,7 @@
-.agents
-.playwright-mcp
 node_modules
 dist
+.vite
+.agents
+.playwright-mcp
+.DS_Store
+*.local
